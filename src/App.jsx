@@ -9,7 +9,7 @@ import { signOut } from "firebase/auth"
 import { auth } from './firebase-config'
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(localStorage.getItem("loggedIn"));
   const handleLogout = () => {
     signOut(auth).then(() => {
       setLoggedIn(false);
@@ -37,7 +37,7 @@ const App = () => {
         }
       </nav>
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route exact path="/" element={<Home loggedIn={loggedIn} />} />
         <Route exact path="/createpost" element={<CreatePost loggedIn={loggedIn} />} />
         <Route exact path="/login"
           element={<Login setLoggedIn={setLoggedIn} />} />
