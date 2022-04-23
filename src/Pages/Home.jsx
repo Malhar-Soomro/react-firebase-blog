@@ -2,24 +2,25 @@ import React, { useEffect } from 'react'
 import { collection, doc, deleteDoc } from "firebase/firestore"
 import { db, auth } from "../firebase-config"
 import { useSelector, useDispatch } from 'react-redux'
-import { getPosts } from "../redux/actions/posts"
+import { getPosts, deletePost } from "../redux/actions/posts"
+
 
 const Home = () => {
+    const isAuth = localStorage.getItem("auth");
+    const posts = useSelector((state) => state.posts);
+    console.log(posts)
+    const dispatch = useDispatch();
 
-    getPosts()
     useEffect(() => {
         dispatch(getPosts());
     }, [])
 
-    const posts = useSelector((state) => state.posts);
-    const dispatch = useDispatch();
 
-    const deletePost = async (postId) => {
-        // find the post that should be deleted
-        const post = doc(db, "posts", postId);
-        await deleteDoc(post);
-    }
-    const isAuth = localStorage.getItem("auth");
+    // const deletePost = async (postId) => {
+    //     // find the post that should be deleted
+    //     const post = doc(db, "posts", postId);
+    //     await deleteDoc(post);
+    // }
 
     return (
         <div className="homePage">
@@ -31,7 +32,7 @@ const Home = () => {
                         </div>
 
                         {isAuth && post.author.id === auth.currentUser.uid && <div className="deletePost">
-                            <button onClick={() => deletePost(post.id)}>
+                            <button onClick={() => dispatch(deletePost(post.id))}>
 
                                 &#128465;</button>
                         </div>}

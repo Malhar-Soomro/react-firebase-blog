@@ -1,4 +1,4 @@
-import { CREATE_POST, GET_POSTS } from "../constants/actionTypes";
+import { CREATE_POST, GET_POSTS, DELETE_POST } from "../constants/actionTypes";
 
 
 const authReducer = (state = {}, action) => {
@@ -15,6 +15,8 @@ const authReducer = (state = {}, action) => {
             // console.log(action.payload.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
             // return state;
             return action.payload.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        case DELETE_POST:
+            return state.filter(({ id }) => id !== action.payload);
         default:
             return state;
     }
