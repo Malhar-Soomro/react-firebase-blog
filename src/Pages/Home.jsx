@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { getDocs, collection, doc, deleteDoc } from "firebase/firestore"
 import { db, auth } from "../firebase-config"
+import { useSelector } from 'react-redux'
 
-const Home = ({ loggedIn }) => {
+const Home = () => {
     const postCollectionRef = collection(db, "posts")
+    // const posts = useSelector((state) => state.posts);
+
     const [posts, setPosts] = useState()
 
     const deletePost = async (postId) => {
@@ -11,6 +14,8 @@ const Home = ({ loggedIn }) => {
         const post = doc(db, "posts", postId);
         await deleteDoc(post);
     }
+
+    const isAuth = localStorage.getItem("auth");
 
     const getPosts = async () => {
         const data = await getDocs(postCollectionRef, "posts");
@@ -28,8 +33,9 @@ const Home = ({ loggedIn }) => {
                             <h1>{post.title}</h1>
                         </div>
 
-                        {loggedIn && post.author.id === auth.currentUser.uid && <div className="deletePost">
+                        {isAuth && post.author.id === auth.currentUser.uid && <div className="deletePost">
                             <button onClick={() => deletePost(post.id)}>
+
                                 &#128465;</button>
                         </div>}
                     </div>

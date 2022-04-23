@@ -2,29 +2,35 @@ import React, { useState, useEffect } from 'react'
 import { addDoc, collection } from "firebase/firestore"
 import { db, auth } from "../firebase-config"
 import { useNavigate } from "react-router-dom"
+import { createPost } from "../redux/actions/posts"
+import { useDispatch, useSelector } from "react-redux"
 
-const CreatePost = ({ loggedIn }) => {
-    const [title, setTitle] = useState();
-    const [postText, setPostText] = useState();
+
+const CreatePost = () => {
+    // const [title, setTitle] = useState();
+    // const [postText, setPostText] = useState();
+    const [input, setInput] = useState({ title: "", postText: "" });
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const posts = useSelector((state) => state.posts);
+    // console.log(posts)
 
-    const postCollectionRef = collection(db, "posts")
-    const creatPost = async () => {
-        await addDoc(postCollectionRef,
-            {
-                title,
-                postText,
-                author: {
-                    name: auth.currentUser.displayName,
-                    id: auth.currentUser.uid
-                }
-            });
+
+    // const createPost = (e) => {
+    //     e.preventDefault();
+    //     console.log(input)
+    // }
+
+    const handleOnChange = (e) => {
+        setInput({ ...input, [e.target.name]: e.target.value })
     }
+
     useEffect(() => {
-        if (!loggedIn) {
+        if (!auth) {
             navigate("/")
         }
     }, [])
+
     return (
         <div className="createPostPage">
             <div className="cpContainer">
@@ -35,7 +41,9 @@ const CreatePost = ({ loggedIn }) => {
                     <input
                         type="text"
                         placeholder="Title..."
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={handleOnChange}
+                        name="title"
+                        value={input.title}
                     />
                 </div>
 
@@ -44,10 +52,12 @@ const CreatePost = ({ loggedIn }) => {
                     <textarea
                         type="text"
                         placeholder="Post..."
-                        onChange={(e) => setPostText(e.target.value)}
+                        onChange={handleOnChange}
+                        name="postText"
+                        value={input.postText}
                     />
                 </div>
-                <button onClick={creatPost}>Submit Post</button>
+                <button onClick={() => dispatch(createPost(input, dispatch))}>Submit Post</button>
             </div>
         </div>
     )
